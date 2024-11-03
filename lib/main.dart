@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'home_page.dart';
 import 'user_list.dart';
 import 'birthday_list.dart';
 import 'user.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => UserProvider()..fetchUsers(), // Fetch users on startup
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -68,7 +74,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
           ),
         ],
         currentIndex: _selectedIndex,
-        // selectedItemColor: Colors.amber, // Highlight selected item
+        selectedItemColor: Colors.blue,
         // unselectedItemColor: Colors.grey,
         // backgroundColor: Colors.black,
         // showUnselectedLabels: true,

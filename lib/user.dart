@@ -32,7 +32,8 @@ class User {
 
   String get fullName => "$firstName $lastName";
 }
-class UserProvider {
+
+class UserProvider extends ChangeNotifier{
   List<User> _users = [];
   List<User> _favorites = [];
 
@@ -40,12 +41,15 @@ class UserProvider {
   List<User> get favorites => _favorites;
 
   Future<void> fetchUsers() async {
-    final response = await get(Uri.parse('https://dummyjson.com/users'));
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body)['users'] as List;
-      _users = data.map((user) => User.fromJson(user)).toList();
-    } else {
-      throw Exception('Failed to load users');
+    if (_users.isEmpty) { // Only fetch if the list is empty
+      final response = await get(Uri.parse('https://dummyjson.com/users'));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body)['users'] as List;
+        _users = data.map((user) => User.fromJson(user)).toList();
+        notifyListeners(); // Notify listeners after fetching users
+      } else {
+        throw Exception('Failed to load users');
+      }
     }
   }
 
@@ -55,5 +59,6 @@ class UserProvider {
     } else {
       _favorites.add(user);
     }
+    notifyListeners();
   }
 }
